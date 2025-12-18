@@ -202,3 +202,4 @@ class KafkaManager:
         thread = threading.Thread(target=run_in_thread, daemon=True)
         thread.start()
         return thread
+

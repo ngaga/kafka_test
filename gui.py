@@ -29,6 +29,8 @@ class KafkaGUI:
         self.consumer_thread: Optional[threading.Thread] = None
         
         self.setup_ui()
+        self.root.update_idletasks()
+        self.root.update()
         
     def setup_ui(self):
         """Setup the user interface."""
@@ -36,62 +38,74 @@ class KafkaGUI:
         connection_frame = ttk.LabelFrame(self.root, text="Connection", padding=10)
         connection_frame.pack(fill=tk.X, padx=10, pady=5)
         
-        ttk.Label(connection_frame, text="Bootstrap Servers:").grid(row=0, column=0, padx=5, pady=5)
-        self.bootstrap_entry = ttk.Entry(connection_frame, width=30)
+        connection_inner = ttk.Frame(connection_frame)
+        connection_inner.pack(fill=tk.X)
+        
+        ttk.Label(connection_inner, text="Bootstrap Servers:").grid(row=0, column=0, padx=5, pady=5)
+        self.bootstrap_entry = ttk.Entry(connection_inner, width=30)
         self.bootstrap_entry.insert(0, "localhost:9092")
         self.bootstrap_entry.grid(row=0, column=1, padx=5, pady=5)
         
-        self.connect_btn = ttk.Button(connection_frame, text="Connect", command=self.connect)
+        self.connect_btn = ttk.Button(connection_inner, text="Connect", command=self.connect)
         self.connect_btn.grid(row=0, column=2, padx=5, pady=5)
         
-        self.status_label = ttk.Label(connection_frame, text="Disconnected", foreground="red")
+        self.status_label = ttk.Label(connection_inner, text="Disconnected", foreground="red")
         self.status_label.grid(row=0, column=3, padx=10, pady=5)
         
         # Topic management frame
         topic_frame = ttk.LabelFrame(self.root, text="Topic Management", padding=10)
         topic_frame.pack(fill=tk.X, padx=10, pady=5)
         
-        ttk.Label(topic_frame, text="Topic Name:").grid(row=0, column=0, padx=5, pady=5)
-        self.topic_entry = ttk.Entry(topic_frame, width=30)
+        topic_inner = ttk.Frame(topic_frame)
+        topic_inner.pack(fill=tk.X)
+        
+        ttk.Label(topic_inner, text="Topic Name:").grid(row=0, column=0, padx=5, pady=5)
+        self.topic_entry = ttk.Entry(topic_inner, width=30)
         self.topic_entry.insert(0, "test-topic")
         self.topic_entry.grid(row=0, column=1, padx=5, pady=5)
         
-        ttk.Button(topic_frame, text="Create Topic", command=self.create_topic).grid(row=0, column=2, padx=5, pady=5)
+        ttk.Button(topic_inner, text="Create Topic", command=self.create_topic).grid(row=0, column=2, padx=5, pady=5)
         
         # Producer frame
         producer_frame = ttk.LabelFrame(self.root, text="Producer - Send Messages", padding=10)
         producer_frame.pack(fill=tk.X, padx=10, pady=5)
         
-        ttk.Label(producer_frame, text="Topic:").grid(row=0, column=0, padx=5, pady=5)
-        self.producer_topic_entry = ttk.Entry(producer_frame, width=20)
+        producer_inner = ttk.Frame(producer_frame)
+        producer_inner.pack(fill=tk.X)
+        
+        ttk.Label(producer_inner, text="Topic:").grid(row=0, column=0, padx=5, pady=5)
+        self.producer_topic_entry = ttk.Entry(producer_inner, width=20)
         self.producer_topic_entry.insert(0, "test-topic")
         self.producer_topic_entry.grid(row=0, column=1, padx=5, pady=5)
         
-        ttk.Label(producer_frame, text="Key (optional):").grid(row=0, column=2, padx=5, pady=5)
-        self.key_entry = ttk.Entry(producer_frame, width=20)
+        ttk.Label(producer_inner, text="Key (optional):").grid(row=0, column=2, padx=5, pady=5)
+        self.key_entry = ttk.Entry(producer_inner, width=20)
         self.key_entry.grid(row=0, column=3, padx=5, pady=5)
         
-        ttk.Label(producer_frame, text="Message:").grid(row=1, column=0, padx=5, pady=5, sticky=tk.N)
-        self.message_text = scrolledtext.ScrolledText(producer_frame, width=50, height=5)
+        ttk.Label(producer_inner, text="Message:").grid(row=1, column=0, padx=5, pady=5, sticky=tk.N)
+        self.message_text = scrolledtext.ScrolledText(producer_inner, width=50, height=5)
         self.message_text.insert("1.0", '{"message": "Hello Kafka", "timestamp": ""}')
         self.message_text.grid(row=1, column=1, columnspan=3, padx=5, pady=5, sticky=tk.W)
         
-        ttk.Button(producer_frame, text="Send Message", command=self.send_message).grid(row=2, column=0, padx=5, pady=5)
-        ttk.Button(producer_frame, text="Send Multiple (10)", command=self.send_multiple).grid(row=2, column=1, padx=5, pady=5)
+        ttk.Button(producer_inner, text="Send Message", command=self.send_message).grid(row=2, column=0, padx=5, pady=5)
+        ttk.Button(producer_inner, text="Send Multiple (10)", command=self.send_multiple).grid(row=2, column=1, padx=5, pady=5)
         
         # Consumer frame
         consumer_frame = ttk.LabelFrame(self.root, text="Consumer - Receive Messages", padding=10)
         consumer_frame.pack(fill=tk.X, padx=10, pady=5)
         
-        ttk.Label(consumer_frame, text="Topics (comma-separated):").grid(row=0, column=0, padx=5, pady=5)
-        self.consumer_topics_entry = ttk.Entry(consumer_frame, width=40)
+        consumer_inner = ttk.Frame(consumer_frame)
+        consumer_inner.pack(fill=tk.X)
+        
+        ttk.Label(consumer_inner, text="Topics (comma-separated):").grid(row=0, column=0, padx=5, pady=5)
+        self.consumer_topics_entry = ttk.Entry(consumer_inner, width=40)
         self.consumer_topics_entry.insert(0, "test-topic")
         self.consumer_topics_entry.grid(row=0, column=1, padx=5, pady=5)
         
-        self.start_consumer_btn = ttk.Button(consumer_frame, text="Start Consumer", command=self.start_consumer)
+        self.start_consumer_btn = ttk.Button(consumer_inner, text="Start Consumer", command=self.start_consumer)
         self.start_consumer_btn.grid(row=0, column=2, padx=5, pady=5)
         
-        self.stop_consumer_btn = ttk.Button(consumer_frame, text="Stop Consumer", command=self.stop_consumer, state=tk.DISABLED)
+        self.stop_consumer_btn = ttk.Button(consumer_inner, text="Stop Consumer", command=self.stop_consumer, state=tk.DISABLED)
         self.stop_consumer_btn.grid(row=0, column=3, padx=5, pady=5)
         
         # Messages display frame
@@ -112,6 +126,9 @@ class KafkaGUI:
         
         self.messages_sent = 0
         self.messages_received = 0
+        
+        # Force UI update on macOS
+        self.root.update_idletasks()
         
     def connect(self):
         """Connect to Kafka broker."""
@@ -311,3 +328,4 @@ class KafkaGUI:
             self.consuming = False
             self.kafka_manager.run_async(self.kafka_manager.close())
         self.root.destroy()
+
